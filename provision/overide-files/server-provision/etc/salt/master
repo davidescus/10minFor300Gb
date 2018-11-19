@@ -1,0 +1,15 @@
+file_roots:
+  base:
+    - /srv/salt
+
+pillar_roots:
+  base:
+    - /srv/pillar
+
+
+default_top: base
+state_top_saltenv: base
+top_file_merging_strategy: same
+
+
+
