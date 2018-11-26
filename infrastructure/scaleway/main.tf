@@ -64,6 +64,34 @@ output "Provision Machine Ip: " {
   value = "${scaleway_ip.ip-provision.ip}"
 }
 
+# resources for monitor
+resource "scaleway_ip" "ip-monitor" {}
+resource "scaleway_server" "server-monitor" {
+  name       = "server-monitor"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-generator.ip}"
+  depends_on = ["scaleway_ip.ip-monitor", "scaleway_ip.ip-provision"]
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      // boostrap salt minion (no param required)
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+    }
+  }
+}
+
+output "Monitor Machine Ip: " {
+  value = "${scaleway_ip.ip-monitor.ip}"
+}
+
 # resources for build server
 //resource "scaleway_ip" "ip-build" {}
 //resource "scaleway_server" "server-build" {
