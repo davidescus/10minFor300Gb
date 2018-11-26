@@ -1,0 +1,11 @@
+golang:
+  prefix: /usr/local
+  go_root: /usr/local/go
+  go_path: /usr/local/golang/1.11.2/go
+  version: "1.11.2"
+  archive_hash: "042fba357210816160341f1002440550e952eb12678f7c9e7e9d389437942550"
+
+  #'Alternatives system' priority: 0 disables. zero is default
+  linux:
+    altpriority: 10
+

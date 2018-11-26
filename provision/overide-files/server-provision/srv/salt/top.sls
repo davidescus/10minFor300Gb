@@ -1,3 +1,3 @@
 base:
-  '*-build':
-    - golang
+  '*-generator':
+    - server-generator

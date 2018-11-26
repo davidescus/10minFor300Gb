@@ -1,0 +1,13 @@
+[Unit]
+Description=Pseudoservice data generator
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/root/app/generator/./pseudoservice/linux/pseudoservice --read-timeout=1s --write-timeout=1s --keep-alive=15s --listen-limit=1024 --max-header-size=3KiB --host=0.0.0.0 --port=8080
+
+[Install]
+WantedBy=multi-user.target

@@ -65,42 +65,13 @@ output "Provision Machine Ip: " {
 }
 
 # resources for build server
-resource "scaleway_ip" "ip-build" {}
-resource "scaleway_server" "server-build" {
-  name       = "server-build"
-  image      = "${var.os-image}"
-  type       = "${var.instance-type}"
-  public_ip  = "${scaleway_ip.ip-build.ip}"
-  depends_on = ["scaleway_ip.ip-provision"]
-
-  provisioner "remote-exec" {
-    inline = [
-      "apt-get update",
-      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
-      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
-      // boostrap salt minion (no param required)
-      "sh bootstrap-salt.sh stable 2017.7",
-    ]
-
-    connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
-    }
-  }
-}
-
-
-output "Build Machine Ip: " {
-  value = "${scaleway_ip.ip-build.ip}"
-}
-
-# resources for generator
-//resource "scaleway_ip" "ip-generator" {}
-//resource "scaleway_server" "server-generator" {
-//  name       = "server-generator"
+//resource "scaleway_ip" "ip-build" {}
+//resource "scaleway_server" "server-build" {
+//  name       = "server-build"
 //  image      = "${var.os-image}"
 //  type       = "${var.instance-type}"
-//  public_ip  = "${scaleway_ip.ip-generator.ip}"
-//  depends_on = ["scaleway_ip.ip-generator", "scaleway_ip.ip-provision"]
+//  public_ip  = "${scaleway_ip.ip-build.ip}"
+//  depends_on = ["scaleway_ip.ip-provision"]
 //
 //  provisioner "remote-exec" {
 //    inline = [
@@ -117,9 +88,38 @@ output "Build Machine Ip: " {
 //  }
 //}
 //
-//output "Generator Machine Ip: " {
-//  value = "${scaleway_ip.ip-generator.ip}"
+//
+//output "Build Machine Ip: " {
+//  value = "${scaleway_ip.ip-build.ip}"
 //}
+
+# resources for generator
+resource "scaleway_ip" "ip-generator" {}
+resource "scaleway_server" "server-generator" {
+  name       = "server-generator"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-generator.ip}"
+  depends_on = ["scaleway_ip.ip-generator", "scaleway_ip.ip-provision"]
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      // boostrap salt minion (no param required)
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+    }
+  }
+}
+
+output "Generator Machine Ip: " {
+  value = "${scaleway_ip.ip-generator.ip}"
+}
 
 // *******************************************************
 
