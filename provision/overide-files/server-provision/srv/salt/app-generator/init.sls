@@ -18,5 +18,6 @@ app-generator-systemd-unit:
 app-generator-running:
   service.running:
     - name: app-generator
+    - enable: True
     - watch:
       - module: app-generator-systemd-unit

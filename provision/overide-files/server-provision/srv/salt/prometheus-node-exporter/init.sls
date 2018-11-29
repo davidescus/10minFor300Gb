@@ -18,5 +18,6 @@ node-exporter-systemd-unit:
 node-exporter-running:
   service.running:
     - name: node-exporter
+    - enable: True
     - watch:
       - module: node-exporter-systemd-unit

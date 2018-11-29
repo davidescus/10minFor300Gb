@@ -17,7 +17,7 @@ prometheus-systemd-unit:
 
 # TODO set prometheus config file (prometheus.yml)
 
-node-exporter-running:
+prometheus-running:
   service.running:
     - name: prometheus
     - enable: True
