@@ -1,3 +1,6 @@
 base:
+  '*':
+    - systemd
+    - prometheus-node-exporter
   '*-generator':
-    - server-generator
+    - app-generator
