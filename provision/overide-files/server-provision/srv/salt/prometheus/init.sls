@@ -15,7 +15,7 @@ prometheus-systemd-unit:
     - require:
       - extract-prometheus
 
-# TODO set prometheus config file (prometheus.yml)
+# TODO use Consul for service discovery
 
 prometheus-running:
   service.running:
