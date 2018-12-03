@@ -3,3 +3,11 @@ https://github.com/prometheus/prometheus/releases/download/v2.5.0/prometheus-2.5
 
 download node exporter:
 https://github.com/prometheus/node_exporter/releases/download/v0.17.0-rc.0/node_exporter-0.17.0-rc.0.linux-amd64.tar.gz
+
+download consul:
+https://releases.hashicorp.com/consul/1.4.0/consul_1.4.0_linux_amd64.zip
+
+create consul service:
+echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}} ' >> consul.d/web.json
+---- start consul with config dir ----
+consul agent -dev -config-dir=./consul.d -node machine

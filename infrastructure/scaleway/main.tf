@@ -123,15 +123,15 @@ output "Monitoring Machine Ip: " {
   value = "${scaleway_ip.ip-monitoring.ip}"
 }
 
-# --- generator server(s) ---
-resource "scaleway_ip" "ip-generator" {}
-resource "scaleway_server" "server-generator" {
-  name       = "server-generator"
+# --- consul server(s) ---
+resource "scaleway_ip" "ip-consul" {}
+resource "scaleway_server" "server-consul" {
+  name       = "server-consul"
   image      = "${var.os-image}"
   type       = "${var.instance-type}"
-  public_ip  = "${scaleway_ip.ip-generator.ip}"
-  depends_on = ["scaleway_ip.ip-generator", "scaleway_ip.ip-provision"]
-  security_group = "${scaleway_security_group.monitoring.id}"
+  public_ip  = "${scaleway_ip.ip-consul.ip}"
+  depends_on = ["scaleway_ip.ip-consul", "scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.consul.id}"
 
   provisioner "remote-exec" {
     inline = [
@@ -147,13 +147,13 @@ resource "scaleway_server" "server-generator" {
   }
 }
 
-resource "scaleway_security_group" "generator" {
-  name = "generator"
-  description = "Security group for generator machines"
+resource "scaleway_security_group" "consul" {
+  name = "consul"
+  description = "Security group for consul"
 }
 
-resource "scaleway_security_group_rule" "generatot-accept" {
-  security_group = "${scaleway_security_group.generator.id}"
+resource "scaleway_security_group_rule" "consul-accept" {
+  security_group = "${scaleway_security_group.consul.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -161,6 +161,49 @@ resource "scaleway_security_group_rule" "generatot-accept" {
   port      = 9100
 }
 
-output "Generator Machine Ip: " {
-  value = "${scaleway_ip.ip-generator.ip}"
+output "Consul Machine Ip: " {
+  value = "${scaleway_ip.ip-consul.ip}"
 }
+
+
+//# --- generator server(s) ---
+//resource "scaleway_ip" "ip-generator" {}
+//resource "scaleway_server" "server-generator" {
+//  name       = "server-generator"
+//  image      = "${var.os-image}"
+//  type       = "${var.instance-type}"
+//  public_ip  = "${scaleway_ip.ip-generator.ip}"
+//  depends_on = ["scaleway_ip.ip-generator", "scaleway_ip.ip-provision"]
+//  security_group = "${scaleway_security_group.monitoring.id}"
+//
+//  provisioner "remote-exec" {
+//    inline = [
+//      "apt-get update",
+//      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+//      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+//      "sh bootstrap-salt.sh stable 2017.7",
+//    ]
+//
+//    connection {
+//      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+//    }
+//  }
+//}
+//
+//resource "scaleway_security_group" "generator" {
+//  name = "generator"
+//  description = "Security group for generator machines"
+//}
+//
+//resource "scaleway_security_group_rule" "generatot-accept" {
+//  security_group = "${scaleway_security_group.generator.id}"
+//  action    = "accept"
+//  direction = "inbound"
+//  ip_range  = "0.0.0.0/0"
+//  protocol  = "TCP"
+//  port      = 9100
+//}
+//
+//output "Generator Machine Ip: " {
+//  value = "${scaleway_ip.ip-generator.ip}"
+//}
