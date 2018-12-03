@@ -13,6 +13,7 @@ resource "scaleway_server" "server-provision" {
   type       = "${var.instance-type}"
   public_ip  = "${scaleway_ip.ip-provision.ip}"
   depends_on = ["scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.provision.id}"
 
   provisioner "remote-exec" {
     inline = [
@@ -62,6 +63,20 @@ resource "scaleway_server" "server-provision" {
   }
 }
 
+resource "scaleway_security_group" "provision" {
+  name = "provision"
+  description = "Security group for provision machines"
+}
+
+resource "scaleway_security_group_rule" "provision-accept" {
+  security_group = "${scaleway_security_group.provision.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
 output "Provision Machine Ip: " {
   value = "${scaleway_ip.ip-provision.ip}"
 }
@@ -74,6 +89,7 @@ resource "scaleway_server" "server-monitoring" {
   type       = "${var.instance-type}"
   public_ip  = "${scaleway_ip.ip-monitoring.ip}"
   depends_on = ["scaleway_ip.ip-monitoring", "scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.monitoring.id}"
 
   provisioner "remote-exec" {
     inline = [
@@ -87,6 +103,20 @@ resource "scaleway_server" "server-monitoring" {
       private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
     }
   }
+}
+
+resource "scaleway_security_group" "monitoring" {
+  name = "monitoring"
+  description = "Security group for monitoring machines"
+}
+
+resource "scaleway_security_group_rule" "monitoring-accept" {
+  security_group = "${scaleway_security_group.monitoring.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
 }
 
 output "Monitoring Machine Ip: " {
@@ -101,6 +131,7 @@ resource "scaleway_server" "server-generator" {
   type       = "${var.instance-type}"
   public_ip  = "${scaleway_ip.ip-generator.ip}"
   depends_on = ["scaleway_ip.ip-generator", "scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.monitoring.id}"
 
   provisioner "remote-exec" {
     inline = [
@@ -114,6 +145,20 @@ resource "scaleway_server" "server-generator" {
       private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
     }
   }
+}
+
+resource "scaleway_security_group" "generator" {
+  name = "generator"
+  description = "Security group for generator machines"
+}
+
+resource "scaleway_security_group_rule" "generatot-accept" {
+  security_group = "${scaleway_security_group.generator.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
 }
 
 output "Generator Machine Ip: " {
