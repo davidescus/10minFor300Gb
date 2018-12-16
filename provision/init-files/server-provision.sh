@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO apt-get update and apt-date upgrade
-
 # restart salt master
 pkill salt-master
 salt-master -d
@@ -11,3 +9,6 @@ salt-key -A -y
 
 # see if minions was accepted
 salt-key
+
+# send network interfaces for mine
+salt '*' mine.send network.interfaces && salt '*' mine.send grains.items && salt '*' mine.update
