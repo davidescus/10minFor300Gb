@@ -19,28 +19,28 @@
     - easy to use (one command to create, modify or destroy)    
     https://www.terraform.io/
     
-- ```machine provision``` Ansible
-    - based on SSH (need to learn)    
-    https://www.ansible.com/
+- ```machine provision``` SaltStack
+    - based on master - agents(minions)   
+    https://docs.saltstack.com/en/latest/
     
-- ```pipelines``` ??? need to research
-    - builds
-    - run linters   
-    - run tests on isolated environment
-    - move code between stages
-    
-- ```monitoring``` ??? need to research
-    - be sure your system is up and running
+- ```monitoring``` Prometheus
+    - be sure your system is up and running. Master will collect metrics from targets
     - collect metrics
-    - visualize graphs    
+    - visualize graphs  
+    https://prometheus.io/    
+    
+- ```logs``` ELK
+    - collect logs for your`s machines
+    - query logs  
+    
+- ```storage``` Casandra
+    - distributed database
+    https://www.instaclustr.com        
     
 - ```for generate data``` Goland
     - easy and strait ahead programming language that deal very well with concurent and parallel use cases
     https://golang.org/
     
-- ```storage``` Dgraph
-    - distributed graph database
-    https://dgraph.io/    
          
     
 
