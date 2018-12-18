@@ -8,3 +8,6 @@ base:
 
   '*-monitoring':
     - prometheus
+
+  '*-elk':
+    - java8
