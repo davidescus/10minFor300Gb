@@ -5,7 +5,7 @@
 # ... and to not use cmd.run
 # https://gist.github.com/snarfmonkey/b7a1109ccbfcfcaf723e
 
-oracle|ppa:
+oracle-ppa:
   pkgrepo.managed:
     - humanname: WebUpd8 Oracle Java PPA repository
     - name: deb http://ppa.launchpad.net/webupd8team/java/ubuntu bionic main
@@ -14,14 +14,15 @@ oracle|ppa:
     - keyid: EEA14886
     - keyserver: keyserver.ubuntu.com
 
-oracle|license-select:
+oracle-license-select:
   debconf.set:
     - name: oracle-java8-installer
     - data:
         'shared/accepted-oracle-license-v1-1': {'type': 'boolean', 'value': 'true'}
 
-oracle|java8-installer:
+oracle-java8-installer:
   pkg:
     - installed
     - require:
-      - pkgrepo: oracle|ppa
+      - pkgrepo: oracle-ppa
+

@@ -1,6 +1,6 @@
 # it will worls only on debina family
 # https://github.com/bougie/salt-filebeat-formula/
-apt_https_transport:
+pkg|apt-transport-https:
   pkg.latest:
     - name: apt-transport-https
 
@@ -14,7 +14,7 @@ filebeat|repo:
     - gpgcheck: 1
     - refresh_db: True
     - require:
-      - pkg: apt_https_transport
+      - pkg: pkg|apt-transport-https
 
 filebeat|package:
   pkg.installed:
