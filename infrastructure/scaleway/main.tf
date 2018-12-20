@@ -170,6 +170,33 @@ resource "scaleway_security_group_rule" "elk-accept-prometheus-node-exporter" {
   port      = 9100
 }
 
+resource "scaleway_security_group_rule" "elasticsearch-accept-accept-web" {
+  security_group = "${scaleway_security_group.elk.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9200
+}
+
+resource "scaleway_security_group_rule" "elk-accept-tcp" {
+  security_group = "${scaleway_security_group.elk.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9300
+}
+
+resource "scaleway_security_group_rule" "kibana-accept-web" {
+  security_group = "${scaleway_security_group.elk.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 5601
+}
+
 output "ELK Machine Ip: " {
   value = "${scaleway_ip.ip-elk.ip}"
 }
