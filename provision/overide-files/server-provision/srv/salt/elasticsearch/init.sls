@@ -1,4 +1,4 @@
-elasticsearch_repo:
+elastic|repo:
   pkgrepo.managed:
     - humanname: Elasticsearch Official Debian Repository
     - name: deb https://artifacts.elastic.co/packages/6.x/apt stable main
@@ -6,23 +6,22 @@ elasticsearch_repo:
     - key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
     - file: /etc/apt/sources.list.d/elasticsearch.list
 
-elasticsearch:
-  pkg:
-    - installed
+elasticsearch|package:
+  pkg.installed:
+    - name: elasticsearch
     - require:
-      - pkgrepo: elasticsearch_repo
-  service:
-    - running
+      - pkgrepo: elastic|repo
+
+elasticsearch|service:
+  service.running:
+    - name: elasticsearch
     - enable: True
     - require:
-      - pkg: elasticsearch
+      - pkg: elasticsearch|package
       - file: /etc/elasticsearch/elasticsearch.yml
 
-/etc/elasticsearch/elasticsearch.yml:
-  file:
-    - managed
-    - user: root
-    - group: root
-    - mode: 644
+elasticsearch|config:
+  file.managed:
+    - name: /etc/elasticsearch/elasticsearch.yml
     - template: jinja
     - source: salt://elasticsearch/files/elasticsearch.yml
