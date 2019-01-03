@@ -12,3 +12,4 @@ base:
   '*-elk':
     - java8
     - elasticsearch
+    - kibana

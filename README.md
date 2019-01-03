@@ -32,6 +32,7 @@
 - ```logs``` ELK
     - collect logs for your`s machines
     - query logs  
+    https://www.elastic.co
     
 - ```storage``` Casandra
     - distributed database
