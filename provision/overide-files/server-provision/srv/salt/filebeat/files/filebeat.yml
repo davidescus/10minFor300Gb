@@ -145,7 +145,7 @@ setup.kibana:
 # Configure what output to use when sending the data collected by the beat.
 
 #-------------------------- Elasticsearch output ------------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Array of hosts to connect to.
   # hosts: ["localhost:9200"]
 
@@ -155,8 +155,9 @@ output.elasticsearch:
   #password: "changeme"
 
 #----------------------------- Logstash output --------------------------------
-  #output.logstash:
+output.logstash:
   # The Logstash hosts
+# todo get ip of logstash machine
   hosts: ["localhost:5044"]
 
   # Optional SSL. By default is off.
