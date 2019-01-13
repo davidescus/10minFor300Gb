@@ -1,5 +1,5 @@
 # Kibana is served by a back end server. This setting specifies the port to use.
-#server.port: 5601
+server.port: 5601
 
 # Specifies the address to which the Kibana server will bind. IP addresses and host names are both valid values.
 # The default is 'localhost', which usually means remote machines will not be able to connect.
@@ -89,10 +89,11 @@ kibana.index: ".kibana"
 #elasticsearch.logQueries: false
 
 # Specifies the path where Kibana creates the process ID file.
-pid.file: /var/run/kibana.pid
+#pid.file: /var/run/kibana.pid
 
 # Enables you specify a file where Kibana stores log output.
-#logging.dest: stdout
+logging.dest: /var/log/kibana/kibana.log
+#logging.dest: /var/log/kibana
 
 # Set the value of this setting to true to suppress all logging output.
 #logging.silent: false

@@ -7,6 +7,17 @@ kibana|package:
     - require:
       - pkgrepo: elastic|repo
 
+{% set pathToLogFile = '/var/log/kibana/kibana.log' %}
+
+kibana|log-file:
+  file.managed:
+    - name: {{ pathToLogFile }}
+    - makedirs: True
+    - user: kibana
+    - group: kibana
+    - require:
+      - pkg: kibana|package
+
 kibana|service:
   service.running:
     - name: kibana
@@ -14,6 +25,7 @@ kibana|service:
     - require:
       - pkg: kibana|package
       - file: /etc/kibana/kibana.yml
+      - file: {{ pathToLogFile }}
 
 kibana|config:
   file.managed:
