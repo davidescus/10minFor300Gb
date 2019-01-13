@@ -197,6 +197,15 @@ resource "scaleway_security_group_rule" "kibana-accept-web" {
   port      = 5601
 }
 
+resource "scaleway_security_group_rule" "logstash-accept-beats" {
+  security_group = "${scaleway_security_group.elk.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 5044
+}
+
 output "ELK Machine Ip: " {
   value = "${scaleway_ip.ip-elk.ip}"
 }
