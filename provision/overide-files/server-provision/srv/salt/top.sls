@@ -10,6 +10,7 @@ base:
     - prometheus
 
   '*-elk':
+    - common.ubuntu-swap
     - java8
     - elasticsearch
     - kibana
