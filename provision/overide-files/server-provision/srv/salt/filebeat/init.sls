@@ -22,10 +22,16 @@ filebeat|package:
     - require:
       - pkgrepo: filebeat|repo
 
+{%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
+{%- set  logstashIp =  interfaces['server-logstash']['enp0s2']['inet'][0]['address'] %}
+
 filebeat|config:
   file.managed:
     - name: /etc/filebeat/filebeat.yml
     - source: salt://filebeat/files/filebeat.yml
+    - template: jinja
+      - context:
+        ipAddress: {{ logstashIp }}
 
 filebeat|service:
   service.running:

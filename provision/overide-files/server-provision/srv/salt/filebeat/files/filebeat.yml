@@ -157,8 +157,7 @@ setup.kibana:
 #----------------------------- Logstash output --------------------------------
 output.logstash:
   # The Logstash hosts
-# todo get ip of logstash machine
-  hosts: ["localhost:5044"]
+  hosts: ["{{ ipAddress }}:5044"]
 
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications
@@ -182,12 +181,12 @@ processors:
 
 # Sets log level. The default log level is info.
 # Available log levels are: error, warning, info, debug
-#logging.level: debug
+logging.level: debug
 
 # At debug level, you can selectively enable logging only for some components.
 # To enable all selectors use ["*"]. Examples of other selectors are "beat",
 # "publish", "service".
-#logging.selectors: ["*"]
+logging.selectors: ["*"]
 
 #============================== Xpack Monitoring ===============================
 # filebeat can export internal metrics to a central Elasticsearch monitoring
