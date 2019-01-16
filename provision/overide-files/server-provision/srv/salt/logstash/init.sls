@@ -22,7 +22,7 @@ logstash|config-filter:
     - source: salt://logstash/files/{{ filterFile }}
 
 {%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
-{%- set  defaultElasticSearchIp =  interfaces['server-elk']['enp0s2']['inet'][0]['address'] %}
+{%- set  elasticSearchIp =  interfaces['server-elasticsearch']['enp0s2']['inet'][0]['address'] %}
 
 logstash|config-output:
   file.managed:
@@ -30,11 +30,11 @@ logstash|config-output:
      - source: salt://logstash/files/{{ outputFile }}
      - template: jinja
      - context:
-       ipAddress: {{ defaultElasticSearchIp }}
+       ipAddress: {{ elasticSearchIp }}
 
 logstash|service:
   service.running:
-    - name: kibana
+    - name: logstash
     - enable: True
     - require:
       - pkg: logstash|package
