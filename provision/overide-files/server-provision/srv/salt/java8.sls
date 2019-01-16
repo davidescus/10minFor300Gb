@@ -1,28 +1,19 @@
-# add the oracle jvm ppa, and install java8
-# https://launchpad.net/~webupd8team/+archive/ubuntu/java
-# This is used for all java installs
-# This is slightly retooled due to a bug in Salt 2014.7 (Helium)
-# ... and to not use cmd.run
-# https://gist.github.com/snarfmonkey/b7a1109ccbfcfcaf723e
+#
+# Install Java Runtime Environment - OpenJDK version 8
+#
 
-oracle-ppa:
-  pkgrepo.managed:
-    - humanname: WebUpd8 Oracle Java PPA repository
-    - name: deb http://ppa.launchpad.net/webupd8team/java/ubuntu bionic main
-    - dist: bionic
-    - file: /etc/apt/sources.list.d/webupd8team-java.list
-    - keyid: EEA14886
-    - keyserver: keyserver.ubuntu.com
+ca-certificates-java:
+  pkg.latest:
+    - fromrepo: {{ grains.lsb_distrib_codename }}-backports
+    - refresh: False
 
-oracle-license-select:
-  debconf.set:
-    - name: oracle-java8-installer
-    - data:
-        'shared/accepted-oracle-license-v1-1': {'type': 'boolean', 'value': 'true'}
-
-oracle-java8-installer:
-  pkg:
-    - installed
+java8:
+  pkg.installed:
+    - name: openjdk-8-jre-headless
     - require:
-      - pkgrepo: oracle-ppa
-
+      - pkg: ca-certificates-java
+  alternatives.set:
+    - name: java
+    - path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    - require:
+      - pkg: openjdk-8-jre-headless
