@@ -9,8 +9,17 @@ base:
   '*-monitoring':
     - prometheus
 
-  '*-elk':
+  '*-elasticsearch':
     - common.ubuntu-swap
     - java8
     - elasticsearch
+
+  '*-kibana':
+    - common.ubuntu-swap
+    - java8
     - kibana
+
+  '*-logstash':
+    - common.ubuntu-swap
+    - java8
+    - logstash
