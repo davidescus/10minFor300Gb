@@ -30,8 +30,8 @@ filebeat|config:
     - name: /etc/filebeat/filebeat.yml
     - source: salt://filebeat/files/filebeat.yml
     - template: jinja
-      - context:
-        ipAddress: {{ logstashIp }}
+    - context:
+      ipAddress: {{ logstashIp }}
 
 filebeat|service:
   service.running:
