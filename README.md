@@ -34,11 +34,11 @@
     - query logs  
     https://www.elastic.co
     
-- ```storage``` Casandra
+- ```storage``` Cassandra
     - distributed database
     https://www.instaclustr.com        
     
-- ```for generate data``` Goland
+- ```for generate data``` Golang
     - easy and strait ahead programming language that deal very well with concurent and parallel use cases
     https://golang.org/
     
