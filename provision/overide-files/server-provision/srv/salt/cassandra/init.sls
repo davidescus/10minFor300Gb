@@ -11,9 +11,15 @@ cassandra|package:
     - require:
       - pkgrepo: cassandra|repo
 
+cassandra|config:
+  file.managed:
+    - name: /etc/cassandra/cassandra.yaml
+    - source: salt://cassandra/files/cassandra.yaml
+
 cassandra|service:
   service.running:
     - name: cassandra
     - enable: True
     - require:
       - pkg: cassandra|package
+      - file: /etc/cassandra/cassandra.yaml
