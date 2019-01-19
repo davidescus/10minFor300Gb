@@ -23,3 +23,8 @@ base:
     - common.ubuntu-swap
     - java8
     - logstash
+
+  '*-cassandra':
+    - common.ubuntu-swap
+    - java8
+    - cassandra
