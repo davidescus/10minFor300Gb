@@ -11,3 +11,30 @@ create consul service:
 echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}} ' >> consul.d/web.json
 ---- start consul with config dir ----
 consul agent -dev -config-dir=./consul.d -node machine
+
+
+
+### logstash conf
+input {
+  beats {
+    port => 5044
+  }
+}
+
+filter {
+  ruby {
+    code => 'event.set("message", event.get("message").sub( "foo", "BAR"))'
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["{{ ipAddress }}:9200"]
+    manage_template => true
+    index => "%logstash-%{+YYYY.MM.dd}"
+  }
+}
+
+output {
+  stdout { codec => rubydebug }
+}

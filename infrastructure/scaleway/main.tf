@@ -132,15 +132,15 @@ output "Monitoring Machine Ip: " {
   value = "${scaleway_ip.ip-monitoring.ip}"
 }
 
-# --- elk server(s)
-resource "scaleway_ip" "ip-elk" {}
-resource "scaleway_server" "server-elk" {
-  name       = "server-elk"
+# --- elasticserach server(s)
+resource "scaleway_ip" "ip-elasticsearch" {}
+resource "scaleway_server" "server-elasticsearch" {
+  name       = "server-elasticsearch"
   image      = "${var.os-image}"
   type       = "${var.instance-type}"
-  public_ip  = "${scaleway_ip.ip-elk.ip}"
+  public_ip  = "${scaleway_ip.ip-elasticsearch.ip}"
   depends_on = ["scaleway_ip.ip-provision"]
-  security_group = "${scaleway_security_group.elk.id}"
+  security_group = "${scaleway_security_group.elasticsearch.id}"
 
   provisioner "remote-exec" {
     inline = [
@@ -156,13 +156,13 @@ resource "scaleway_server" "server-elk" {
   }
 }
 
-resource "scaleway_security_group" "elk" {
-  name = "elk"
-  description = "Security group for elk machines"
+resource "scaleway_security_group" "elasticsearch" {
+  name = "elasticsearch"
+  description = "Security group for elasticsearch machines"
 }
 
-resource "scaleway_security_group_rule" "elk-accept-prometheus-node-exporter" {
-  security_group = "${scaleway_security_group.elk.id}"
+resource "scaleway_security_group_rule" "elasticsearch-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.elasticsearch.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -170,8 +170,8 @@ resource "scaleway_security_group_rule" "elk-accept-prometheus-node-exporter" {
   port      = 9100
 }
 
-resource "scaleway_security_group_rule" "elasticsearch-accept-accept-web" {
-  security_group = "${scaleway_security_group.elk.id}"
+resource "scaleway_security_group_rule" "elasticsearch-accept-web" {
+  security_group = "${scaleway_security_group.elasticsearch.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -179,8 +179,8 @@ resource "scaleway_security_group_rule" "elasticsearch-accept-accept-web" {
   port      = 9200
 }
 
-resource "scaleway_security_group_rule" "elk-accept-tcp" {
-  security_group = "${scaleway_security_group.elk.id}"
+resource "scaleway_security_group_rule" "elasticsearch-accept-tcp" {
+  security_group = "${scaleway_security_group.elasticsearch.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -188,8 +188,50 @@ resource "scaleway_security_group_rule" "elk-accept-tcp" {
   port      = 9300
 }
 
+output "Elasticsearch Machine Ip: " {
+  value = "${scaleway_ip.ip-elasticsearch.ip}"
+}
+
+# --- kibana server(s) ---
+resource "scaleway_ip" "ip-kibana" {}
+resource "scaleway_server" "server-kibana" {
+  name       = "server-kibana"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-kibana.ip}"
+  depends_on = ["scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.kibana.id}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+    }
+  }
+}
+
+resource "scaleway_security_group" "kibana" {
+  name = "kibana"
+  description = "Security group for kibana machines"
+}
+
+resource "scaleway_security_group_rule" "kibana-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.kibana.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
 resource "scaleway_security_group_rule" "kibana-accept-web" {
-  security_group = "${scaleway_security_group.elk.id}"
+  security_group = "${scaleway_security_group.kibana.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -197,8 +239,50 @@ resource "scaleway_security_group_rule" "kibana-accept-web" {
   port      = 5601
 }
 
+output "Kibana Machine Ip: " {
+  value = "${scaleway_ip.ip-kibana.ip}"
+}
+
+# --- logstash server(s) ---
+resource "scaleway_ip" "ip-logstash" {}
+resource "scaleway_server" "server-logstash" {
+  name       = "server-logstash"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-logstash.ip}"
+  depends_on = ["scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.logstash.id}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+    }
+  }
+}
+
+resource "scaleway_security_group" "logstash" {
+  name = "logstash"
+  description = "Security group for logstash machines"
+}
+
+resource "scaleway_security_group_rule" "logstash-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.logstash.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
 resource "scaleway_security_group_rule" "logstash-accept-beats" {
-  security_group = "${scaleway_security_group.elk.id}"
+  security_group = "${scaleway_security_group.logstash.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -206,6 +290,6 @@ resource "scaleway_security_group_rule" "logstash-accept-beats" {
   port      = 5044
 }
 
-output "ELK Machine Ip: " {
-  value = "${scaleway_ip.ip-elk.ip}"
+output "Logstash Machine Ip: " {
+  value = "${scaleway_ip.ip-logstash.ip}"
 }
