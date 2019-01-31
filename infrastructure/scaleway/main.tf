@@ -19,16 +19,12 @@ resource "scaleway_server" "server-provision" {
   provisioner "remote-exec" {
     inline = [
       "apt-get update",
-      # install salt master
       "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
       "sh bootstrap-salt.sh -MN stable 2017.7",
       "mkdir init-files",
       "rm /etc/salt/master",
       "mkdir /srv/salt",
-
-      # install salt minion
       "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
-      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
       "sh bootstrap-salt.sh stable 2017.7",
     ]
 
@@ -38,23 +34,29 @@ resource "scaleway_server" "server-provision" {
   }
 
   provisioner "file" {
-    source = "../../provision/init-files/",
-    destination = "/root/init-files/",
+    source = "../../scripts/",
+    destination = "/root/scripts/",
   }
 
   provisioner "file" {
-    source = "../../provision/overide-files/server-provision/etc/salt/master",
+    source = "../../provision.sh",
+    destination = "/root/provision.sh",
+  }
+
+  provisioner "file" {
+    source = "../../overide-files/etc/salt/master",
     destination = "/etc/salt/master",
   }
 
   provisioner "file" {
-    source = "../../provision/overide-files/server-provision/srv/",
+    source = "../../overide-files/srv/",
     destination = "/srv/",
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /root/init-files/*",
+      "chmod +x /root/scripts/*",
+      "chmod +x /root/provision.sh",
       "chmod 0644 /etc/salt/master",
     ]
 
@@ -82,8 +84,8 @@ output "Provision Machine Ip: " {
   value = "${scaleway_ip.ip-provision.ip}"
 }
 
-# --- monitor server(s)
-# TODO scale to multiple machines
+//# --- monitor server(s)
+//# TODO scale to multiple machines
 resource "scaleway_ip" "ip-monitoring" {}
 resource "scaleway_server" "server-monitoring" {
   name       = "server-monitoring"
