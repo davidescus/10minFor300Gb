@@ -1,8 +1,12 @@
 include:
   - common.cassandra-package
 
+# TODO find solution to scale on many machines
+# TODO get network interfaces only for cassandra machines
 {%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
 {%- set  seedIp =  interfaces['server-cassandra-seed']['enp0s2']['inet'][0]['address'] %}
+{%- set  nodeIp =  interfaces['server-cassandra-node']['enp0s2']['inet'][0]['address'] %}
+{%- set serverName = grains['id'] %}
 
 cassandra|config:
   file.managed:
@@ -10,7 +14,11 @@ cassandra|config:
     - source: salt://cassandra/files/cassandra.yaml
     - template: jinja
     - context:
+      {% if serverName == "server-cassandra-node" %}
+      nodeIp: {{ nodeIp }}
+      {% else %}
       nodeIp: {{ seedIp }}
+      {% endif %}
       seedIp: {{ seedIp }}
 
 cassandra|service-stop:
@@ -27,6 +35,9 @@ cassandra|service:
   service.running:
     - name: cassandra
     - enable: True
+    {% if serverName == "server-cassandra-node" %}
+    - check_cmd:
+      - "nc -z {{ seedIp }} 9042; do sleep 1; done"
+    {% endif %}
     - require:
-      - pkg: cassandra|package
-      - file: /etc/cassandra/cassandra.yaml
+      - service: cassandra|service-stop
