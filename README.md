@@ -42,7 +42,5 @@
     - easy and strait ahead programming language that deal very well with concurent and parallel use cases
     https://golang.org/
     
-         
-    
-
- 
+### TODO
+* create golang app that that will use fake-generator to get data in batches, split them in standalone requests and send them to storage

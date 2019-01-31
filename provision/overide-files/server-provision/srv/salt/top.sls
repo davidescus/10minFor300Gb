@@ -24,7 +24,12 @@ base:
     - java8
     - logstash
 
-  '*-cassandra':
+  '*-cassandra-seed':
     - common.ubuntu-swap
     - java8
-    - cassandra
+    - cassandra.seed
+
+  '*-cassandra-node':
+      - common.ubuntu-swap
+      - java8
+      - cassandra.node
