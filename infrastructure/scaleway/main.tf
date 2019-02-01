@@ -22,6 +22,7 @@ resource "scaleway_server" "server-provision" {
       "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
       "sh bootstrap-salt.sh -MN stable 2017.7",
       "mkdir init-files",
+      "mkdir scripts",
       "rm /etc/salt/master",
       "mkdir /srv/salt",
       "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
@@ -29,7 +30,7 @@ resource "scaleway_server" "server-provision" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 
@@ -61,7 +62,7 @@ resource "scaleway_server" "server-provision" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
@@ -84,8 +85,8 @@ output "Provision Machine Ip: " {
   value = "${scaleway_ip.ip-provision.ip}"
 }
 
-//# --- monitor server(s)
-//# TODO scale to multiple machines
+# --- monitor server(s)
+# TODO scale to multiple machines
 resource "scaleway_ip" "ip-monitoring" {}
 resource "scaleway_server" "server-monitoring" {
   name       = "server-monitoring"
@@ -104,7 +105,7 @@ resource "scaleway_server" "server-monitoring" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
@@ -156,7 +157,7 @@ resource "scaleway_server" "server-elasticsearch" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
@@ -217,7 +218,7 @@ resource "scaleway_server" "server-kibana" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
@@ -269,7 +270,7 @@ resource "scaleway_server" "server-logstash" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
@@ -321,7 +322,7 @@ resource "scaleway_server" "server-cassandra-seed" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
@@ -364,7 +365,7 @@ resource "scaleway_server" "server-cassandra-node" {
     ]
 
     connection {
-      private_key = "${file("/home/davidescus/.ssh/id_rsa_decrypted")}"
+      private_key = "${file("./without-passphrase-private-key")}"
     }
   }
 }
