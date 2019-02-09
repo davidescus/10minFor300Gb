@@ -48,6 +48,10 @@ resource "scaleway_server" "server-provision" {
     source = "../../provision-app.sh",
     destination = "/root/provision-app.sh",
   }
+  provisioner "file" {
+    source = "../../start-app.sh",
+    destination = "/root/start-app.sh",
+  }
 
   provisioner "file" {
     source = "../../overide-files/etc/salt/master",
@@ -64,6 +68,7 @@ resource "scaleway_server" "server-provision" {
       "chmod +x /root/scripts/*",
       "chmod +x /root/provision.sh",
       "chmod +x /root/provision-app.sh",
+      "chmod +x /root/start-app.sh",
       "chmod 0644 /etc/salt/master",
     ]
 
