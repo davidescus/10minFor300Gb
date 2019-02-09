@@ -28,3 +28,6 @@ base:
     - common.ubuntu-swap
     - java8
     - cassandra
+
+  '*-application':
+    - application

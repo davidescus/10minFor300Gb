@@ -41,3 +41,9 @@ cassandra|service:
     {% endif %}
     - require:
       - service: cassandra|service-stop
+
+# TODO automatically create keyspace and tables when run provision
+cassandra|provision-schema-file:
+  file.managed:
+    - name: /root/provision-app-schema.cql
+    - source: salt://cassandra/files/provision-app-schema.cql
