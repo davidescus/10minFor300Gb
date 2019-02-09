@@ -1,14 +1,5 @@
-# TODO create separate procedure for init and update, do not remove application every time
-app|remove:
-  file.absent:
-    - name: /root/app
-
-app|extract:
-  archive.extracted:
-    - name: /root/app
-    - source: https://github.com/davidescus/request-parser/releases/download/v0.1.0/request-parser.tar.gz
-    - skip_verify: True
-    - enforce_toplevel: False
+include:
+  - common.app-extract
 
 {%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
 
