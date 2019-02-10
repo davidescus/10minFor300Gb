@@ -1,3 +1,5 @@
+{% import_yaml 'config.yaml' as config %}
+
 # grab all network interfaces and create config files for each machine
 {%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
 {%- if interfaces is defined %}
@@ -16,12 +18,12 @@ prometheus|deploy-target-{{ name }}:
 prometheus|extract:
   archive.extracted:
     - name: /root
-    - source: https://github.com/prometheus/prometheus/releases/download/v2.5.0/prometheus-2.5.0.linux-amd64.tar.gz
+    - source: https://github.com/prometheus/prometheus/releases/download/v{{ config.prometheus.version }}/prometheus-{{ config.prometheus.version }}.linux-amd64.tar.gz
     - skip_verify: True
 
 prometheus|deploy-config:
   file.managed:
-    - name: /root/prometheus-2.5.0.linux-amd64/prometheus.yml
+    - name: /root/prometheus-{{ config.prometheus.version }}.linux-amd64/prometheus.yml
     - source: salt://prometheus/prometheus.yml
 
 prometheus|systemd-unit:

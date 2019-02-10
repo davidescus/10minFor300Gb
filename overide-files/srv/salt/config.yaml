@@ -3,3 +3,12 @@ cassandra:
 etl:
   version: v0.1.0
   dir: /root/app
+generator:
+  version: v2.0.0
+  dir: /root/app/generator
+kibana:
+  log_file: /var/log/kibana/kibana.log
+prometheus:
+  version: 2.5.0
+node_exporter:
+  version: 0.17.0-rc.0

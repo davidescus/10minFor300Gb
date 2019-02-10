@@ -1,3 +1,5 @@
+{% import_yaml 'config.yaml' as config %}
+
 include:
   - common.elastic-repo
 
@@ -7,11 +9,9 @@ kibana|package:
     - require:
       - pkgrepo: elastic|repo
 
-{% set pathToLogFile = '/var/log/kibana/kibana.log' %}
-
 kibana|log-file:
   file.managed:
-    - name: {{ pathToLogFile }}
+    - name: {{ config.kibana.log_file }}
     - makedirs: True
     - user: kibana
     - group: kibana
@@ -36,4 +36,4 @@ kibana|service:
     - require:
       - pkg: kibana|package
       - file: /etc/kibana/kibana.yml
-      - file: {{ pathToLogFile }}
+      - file: {{ config.kibana.log_file }}

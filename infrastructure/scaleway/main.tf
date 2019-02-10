@@ -45,12 +45,12 @@ resource "scaleway_server" "server-provision" {
   }
 
   provisioner "file" {
-    source = "../../provision-app.sh",
-    destination = "/root/provision-app.sh",
+    source = "../../provision-etl.sh",
+    destination = "/root/provision-etl.sh",
   }
   provisioner "file" {
-    source = "../../start-app.sh",
-    destination = "/root/start-app.sh",
+    source = "../../run.sh",
+    destination = "/root/run.sh",
   }
 
   provisioner "file" {
@@ -67,8 +67,8 @@ resource "scaleway_server" "server-provision" {
     inline = [
       "chmod +x /root/scripts/*",
       "chmod +x /root/provision.sh",
-      "chmod +x /root/provision-app.sh",
-      "chmod +x /root/start-app.sh",
+      "chmod +x /root/provision-etl.sh",
+      "chmod +x /root/run.sh",
       "chmod 0644 /etc/salt/master",
     ]
 
@@ -96,224 +96,224 @@ output "Provision Machine Ip: " {
   value = "${scaleway_ip.ip-provision.ip}"
 }
 
-//# --- monitor server(s)
-//# TODO scale to multiple machines
-//resource "scaleway_ip" "ip-monitoring" {}
-//resource "scaleway_server" "server-monitoring" {
-//  name       = "server-monitoring"
-//  image      = "${var.os-image}"
-//  type       = "${var.instance-type}"
-//  public_ip  = "${scaleway_ip.ip-monitoring.ip}"
-//  depends_on = ["scaleway_ip.ip-monitoring", "scaleway_ip.ip-provision"]
-//  security_group = "${scaleway_security_group.monitoring.id}"
-//
-//  provisioner "remote-exec" {
-//    inline = [
-//      "apt-get update",
-//      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
-//      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
-//      "sh bootstrap-salt.sh stable 2017.7",
-//    ]
-//
-//    connection {
-//      private_key = "${file("./without-passphrase-private-key")}"
-//    }
-//  }
-//}
-//
-//resource "scaleway_security_group" "monitoring" {
-//  name = "monitoring"
-//  description = "Security group for monitoring machines"
-//}
-//
-//resource "scaleway_security_group_rule" "monitoring-accept-prometheus-node-exporter" {
-//  security_group = "${scaleway_security_group.monitoring.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9100
-//}
-//
-//resource "scaleway_security_group_rule" "monitoring-accept-prometheus-web" {
-//  security_group = "${scaleway_security_group.monitoring.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9090
-//}
-//
-//output "Monitoring Machine Ip: " {
-//  value = "${scaleway_ip.ip-monitoring.ip}"
-//}
-//
-//# --- elasticserach server(s)
-//# TODO scale to multiple machines
-//resource "scaleway_ip" "ip-elasticsearch" {}
-//resource "scaleway_server" "server-elasticsearch" {
-//  name       = "server-elasticsearch"
-//  image      = "${var.os-image}"
-//  type       = "${var.instance-type}"
-//  public_ip  = "${scaleway_ip.ip-elasticsearch.ip}"
-//  depends_on = ["scaleway_ip.ip-provision"]
-//  security_group = "${scaleway_security_group.elasticsearch.id}"
-//
-//  provisioner "remote-exec" {
-//    inline = [
-//      "apt-get update",
-//      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
-//      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
-//      "sh bootstrap-salt.sh stable 2017.7",
-//    ]
-//
-//    connection {
-//      private_key = "${file("./without-passphrase-private-key")}"
-//    }
-//  }
-//}
-//
-//resource "scaleway_security_group" "elasticsearch" {
-//  name = "elasticsearch"
-//  description = "Security group for elasticsearch machines"
-//}
-//
-//resource "scaleway_security_group_rule" "elasticsearch-accept-prometheus-node-exporter" {
-//  security_group = "${scaleway_security_group.elasticsearch.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9100
-//}
-//
-//resource "scaleway_security_group_rule" "elasticsearch-accept-web" {
-//  security_group = "${scaleway_security_group.elasticsearch.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9200
-//}
-//
-//resource "scaleway_security_group_rule" "elasticsearch-accept-tcp" {
-//  security_group = "${scaleway_security_group.elasticsearch.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9300
-//}
-//
-//output "Elasticsearch Machine Ip: " {
-//  value = "${scaleway_ip.ip-elasticsearch.ip}"
-//}
-//
-//# --- kibana server(s) ---
-//# TODO scale to multiple machines
-//resource "scaleway_ip" "ip-kibana" {}
-//resource "scaleway_server" "server-kibana" {
-//  name       = "server-kibana"
-//  image      = "${var.os-image}"
-//  type       = "${var.instance-type}"
-//  public_ip  = "${scaleway_ip.ip-kibana.ip}"
-//  depends_on = ["scaleway_ip.ip-provision"]
-//  security_group = "${scaleway_security_group.kibana.id}"
-//
-//  provisioner "remote-exec" {
-//    inline = [
-//      "apt-get update",
-//      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
-//      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
-//      "sh bootstrap-salt.sh stable 2017.7",
-//    ]
-//
-//    connection {
-//      private_key = "${file("./without-passphrase-private-key")}"
-//    }
-//  }
-//}
-//
-//resource "scaleway_security_group" "kibana" {
-//  name = "kibana"
-//  description = "Security group for kibana machines"
-//}
-//
-//resource "scaleway_security_group_rule" "kibana-accept-prometheus-node-exporter" {
-//  security_group = "${scaleway_security_group.kibana.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9100
-//}
-//
-//resource "scaleway_security_group_rule" "kibana-accept-web" {
-//  security_group = "${scaleway_security_group.kibana.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 5601
-//}
-//
-//output "Kibana Machine Ip: " {
-//  value = "${scaleway_ip.ip-kibana.ip}"
-//}
-//
-//# --- logstash server(s) ---
-//# TODO scale to multiple machines
-//resource "scaleway_ip" "ip-logstash" {}
-//resource "scaleway_server" "server-logstash" {
-//  name       = "server-logstash"
-//  image      = "${var.os-image}"
-//  type       = "${var.instance-type}"
-//  public_ip  = "${scaleway_ip.ip-logstash.ip}"
-//  depends_on = ["scaleway_ip.ip-provision"]
-//  security_group = "${scaleway_security_group.logstash.id}"
-//
-//  provisioner "remote-exec" {
-//    inline = [
-//      "apt-get update",
-//      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
-//      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
-//      "sh bootstrap-salt.sh stable 2017.7",
-//    ]
-//
-//    connection {
-//      private_key = "${file("./without-passphrase-private-key")}"
-//    }
-//  }
-//}
-//
-//resource "scaleway_security_group" "logstash" {
-//  name = "logstash"
-//  description = "Security group for logstash machines"
-//}
-//
-//resource "scaleway_security_group_rule" "logstash-accept-prometheus-node-exporter" {
-//  security_group = "${scaleway_security_group.logstash.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 9100
-//}
-//
-//resource "scaleway_security_group_rule" "logstash-accept-beats" {
-//  security_group = "${scaleway_security_group.logstash.id}"
-//  action    = "accept"
-//  direction = "inbound"
-//  ip_range  = "0.0.0.0/0"
-//  protocol  = "TCP"
-//  port      = 5044
-//}
-//
-//output "Logstash Machine Ip: " {
-//  value = "${scaleway_ip.ip-logstash.ip}"
-//}
+# --- monitor server(s)
+# TODO scale to multiple machines
+resource "scaleway_ip" "ip-monitoring" {}
+resource "scaleway_server" "server-monitoring" {
+  name       = "server-monitoring"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-monitoring.ip}"
+  depends_on = ["scaleway_ip.ip-monitoring", "scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.monitoring.id}"
 
-# --- application node server(s) ---
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("./without-passphrase-private-key")}"
+    }
+  }
+}
+
+resource "scaleway_security_group" "monitoring" {
+  name = "monitoring"
+  description = "Security group for monitoring machines"
+}
+
+resource "scaleway_security_group_rule" "monitoring-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.monitoring.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
+resource "scaleway_security_group_rule" "monitoring-accept-prometheus-web" {
+  security_group = "${scaleway_security_group.monitoring.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9090
+}
+
+output "Monitoring Machine Ip: " {
+  value = "${scaleway_ip.ip-monitoring.ip}"
+}
+
+# --- elasticserach server(s)
+# TODO scale to multiple machines
+resource "scaleway_ip" "ip-elasticsearch" {}
+resource "scaleway_server" "server-elasticsearch" {
+  name       = "server-elasticsearch"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-elasticsearch.ip}"
+  depends_on = ["scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.elasticsearch.id}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("./without-passphrase-private-key")}"
+    }
+  }
+}
+
+resource "scaleway_security_group" "elasticsearch" {
+  name = "elasticsearch"
+  description = "Security group for elasticsearch machines"
+}
+
+resource "scaleway_security_group_rule" "elasticsearch-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.elasticsearch.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
+resource "scaleway_security_group_rule" "elasticsearch-accept-web" {
+  security_group = "${scaleway_security_group.elasticsearch.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9200
+}
+
+resource "scaleway_security_group_rule" "elasticsearch-accept-tcp" {
+  security_group = "${scaleway_security_group.elasticsearch.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9300
+}
+
+output "Elasticsearch Machine Ip: " {
+  value = "${scaleway_ip.ip-elasticsearch.ip}"
+}
+
+# --- kibana server(s) ---
+# TODO scale to multiple machines
+resource "scaleway_ip" "ip-kibana" {}
+resource "scaleway_server" "server-kibana" {
+  name       = "server-kibana"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-kibana.ip}"
+  depends_on = ["scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.kibana.id}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("./without-passphrase-private-key")}"
+    }
+  }
+}
+
+resource "scaleway_security_group" "kibana" {
+  name = "kibana"
+  description = "Security group for kibana machines"
+}
+
+resource "scaleway_security_group_rule" "kibana-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.kibana.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
+resource "scaleway_security_group_rule" "kibana-accept-web" {
+  security_group = "${scaleway_security_group.kibana.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 5601
+}
+
+output "Kibana Machine Ip: " {
+  value = "${scaleway_ip.ip-kibana.ip}"
+}
+
+# --- logstash server(s) ---
+# TODO scale to multiple machines
+resource "scaleway_ip" "ip-logstash" {}
+resource "scaleway_server" "server-logstash" {
+  name       = "server-logstash"
+  image      = "${var.os-image}"
+  type       = "${var.instance-type}"
+  public_ip  = "${scaleway_ip.ip-logstash.ip}"
+  depends_on = ["scaleway_ip.ip-provision"]
+  security_group = "${scaleway_security_group.logstash.id}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "apt-get update",
+      "echo \"${scaleway_ip.ip-provision.ip}    salt\" >> /etc/hosts",
+      "wget -O bootstrap-salt.sh https://bootstrap.saltstack.com",
+      "sh bootstrap-salt.sh stable 2017.7",
+    ]
+
+    connection {
+      private_key = "${file("./without-passphrase-private-key")}"
+    }
+  }
+}
+
+resource "scaleway_security_group" "logstash" {
+  name = "logstash"
+  description = "Security group for logstash machines"
+}
+
+resource "scaleway_security_group_rule" "logstash-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.logstash.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9100
+}
+
+resource "scaleway_security_group_rule" "logstash-accept-beats" {
+  security_group = "${scaleway_security_group.logstash.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 5044
+}
+
+output "Logstash Machine Ip: " {
+  value = "${scaleway_ip.ip-logstash.ip}"
+}
+
+# --- etl node server(s) ---
 # TODO scale to multiple machines
 resource "scaleway_ip" "ip-generator" {}
 resource "scaleway_server" "server-generator" {
@@ -339,7 +339,7 @@ resource "scaleway_server" "server-generator" {
 }
 
 resource "scaleway_security_group" "generator" {
-  name = "application"
+  name = "generator"
   description = "Security group for generator machines"
 }
 
@@ -356,16 +356,16 @@ output "Generator Machine Ip: " {
   value = "${scaleway_ip.ip-generator.ip}"
 }
 
-# --- application node server(s) ---
+# --- etl node server(s) ---
 # TODO scale to multiple machines
-resource "scaleway_ip" "ip-application" {}
-resource "scaleway_server" "server-application" {
-  name       = "server-application"
+resource "scaleway_ip" "ip-etl" {}
+resource "scaleway_server" "server-etl" {
+  name       = "server-etl"
   image      = "${var.os-image}"
   type       = "${var.instance-type}"
-  public_ip  = "${scaleway_ip.ip-application.ip}"
+  public_ip  = "${scaleway_ip.ip-etl.ip}"
   depends_on = ["scaleway_ip.ip-provision"]
-  security_group = "${scaleway_security_group.application.id}"
+  security_group = "${scaleway_security_group.etl.id}"
 
   provisioner "remote-exec" {
     inline = [
@@ -381,13 +381,13 @@ resource "scaleway_server" "server-application" {
   }
 }
 
-resource "scaleway_security_group" "application" {
-  name = "application"
-  description = "Security group for application machines"
+resource "scaleway_security_group" "etl" {
+  name = "etl"
+  description = "Security group for etl machines"
 }
 
-resource "scaleway_security_group_rule" "application-accept-prometheus-node-exporter" {
-  security_group = "${scaleway_security_group.application.id}"
+resource "scaleway_security_group_rule" "etl-accept-prometheus-node-exporter" {
+  security_group = "${scaleway_security_group.etl.id}"
   action    = "accept"
   direction = "inbound"
   ip_range  = "0.0.0.0/0"
@@ -395,8 +395,8 @@ resource "scaleway_security_group_rule" "application-accept-prometheus-node-expo
   port      = 9100
 }
 
-output "Application Machine Ip: " {
-  value = "${scaleway_ip.ip-application.ip}"
+output "Etl Machine Ip: " {
+  value = "${scaleway_ip.ip-etl.ip}"
 }
 
 # --- cassandra seed server(s) ---

@@ -21,6 +21,7 @@ cassandra|config:
       {% endif %}
       seedIp: {{ seedIp }}
 
+# TODO do not restart cassandra if already running
 cassandra|service-stop:
   service.dead:
     - name: cassandra

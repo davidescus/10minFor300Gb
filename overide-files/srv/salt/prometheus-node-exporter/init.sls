@@ -1,7 +1,9 @@
+{% import_yaml 'config.yaml' as config %}
+
 extract-prometheus-node-exporter:
   archive.extracted:
     - name: /root
-    - source: https://github.com/prometheus/node_exporter/releases/download/v0.17.0-rc.0/node_exporter-0.17.0-rc.0.linux-amd64.tar.gz
+    - source: https://github.com/prometheus/node_exporter/releases/download/v{{ config.node_exporter.version }}/node_exporter-{{ config.node_exporter.version }}.linux-amd64.tar.gz
     - skip_verify: True
 
 node-exporter-systemd-unit:

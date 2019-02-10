@@ -1,7 +1,4 @@
-#
 # Install Java Runtime Environment - OpenJDK version 8
-#
-
 ca-certificates-java:
   pkg.latest:
     - fromrepo: {{ grains.lsb_distrib_codename }}-backports

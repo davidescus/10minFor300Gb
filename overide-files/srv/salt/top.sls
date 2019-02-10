@@ -29,5 +29,5 @@ base:
     - java8
     - cassandra
 
-  '*-application':
-    - application
+  '*-etl':
+    - etl

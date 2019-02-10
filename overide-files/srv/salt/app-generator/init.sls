@@ -1,7 +1,9 @@
+{% import_yaml 'config.yaml' as config %}
+
 extract-app-generator:
   archive.extracted:
-    - name: /root/app/generator
-    - source: https://github.com/bgadrian/pseudoservice/releases/download/v2.0.0/pseudoservice.tar.gz
+    - name: {{ config.generator.dir }}
+    - source: https://github.com/bgadrian/pseudoservice/releases/download/{{ config.generator.version }}/pseudoservice.tar.gz
     - skip_verify: True
 
 app-generator-systemd-unit:

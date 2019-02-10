@@ -1,9 +1,9 @@
 {% import_yaml 'config.yaml' as config %}
 
-app|remove:
+etl|remove:
   file.absent:
     - name: {{ config.etl.dir }}
     - order: first
 
 include:
-  - common.app-extract
+  - common.etl
