@@ -22,14 +22,14 @@ module "security-group-monitoring" {
   source = "../security-groups/monitoring"
 }
 
-resource "scaleway_ip" "ip-monitoring" {
+resource "scaleway_ip" "monitoring" {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-monitoring.*.id, count.index)}"
+  server = "${element(scaleway_server.monitoring.*.id, count.index)}"
 }
 
-resource "scaleway_server" server-monitoring {
+resource "scaleway_server" monitoring {
   count = "${var.count}"
-  name = "server-monitoring_${var.count}"
+  name = "monitoring_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   security_group = "${module.security-group-monitoring.id}"
@@ -50,5 +50,5 @@ resource "scaleway_server" server-monitoring {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-monitoring.*.ip}"
+  value = "${scaleway_ip.monitoring.*.ip}"
 }

@@ -13,21 +13,16 @@ variable "instance-type" {
   description = "Server Type"
 }
 
-module "security-group-provision" {
-  source = "../security-groups/provision"
+resource "scaleway_ip" "provision" {
+  count = "${var.count}"
+  server = "${element(scaleway_server.provision.*.id, count.index)}"
 }
 
-resource "scaleway_ip" "ip-provision" {
+resource "scaleway_server" provision {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-provision.*.id, count.index)}"
-}
-
-resource "scaleway_server" server-provision {
-  count = "${var.count}"
-  name = "server-provision_${var.count}"
+  name = "provision_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
-  security_group = "${module.security-group-provision.id}"
   dynamic_ip_required = true
 
   provisioner "remote-exec" {
@@ -94,9 +89,9 @@ resource "scaleway_server" server-provision {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-provision.*.ip}"
+  value = "${scaleway_ip.provision.*.ip}"
 }
 
 output "master-private-ip" {
-  value = "${scaleway_server.server-provision.*.private_ip[0]}"
+  value = "${scaleway_server.provision.*.private_ip[0]}"
 }

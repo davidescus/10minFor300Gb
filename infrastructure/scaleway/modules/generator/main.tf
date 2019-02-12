@@ -18,21 +18,16 @@ variable "master-private-ip" {
   description = "Ip of provision master machine"
 }
 
-module "security-group-generator" {
-  source = "../security-groups/generator"
+resource "scaleway_ip" "generator" {
+  count = "${var.count}"
+  server = "${element(scaleway_server.generator.*.id, count.index)}"
 }
 
-resource "scaleway_ip" "ip-generator" {
+resource "scaleway_server" generator {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-generator.*.id, count.index)}"
-}
-
-resource "scaleway_server" server-generator {
-  count = "${var.count}"
-  name = "server-generator_${var.count}"
+  name = "generator_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
-  security_group = "${module.security-group-generator.id}"
   dynamic_ip_required = true
 
   provisioner "remote-exec" {
@@ -50,5 +45,5 @@ resource "scaleway_server" server-generator {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-generator.*.ip}"
+  value = "${scaleway_ip.generator.*.ip}"
 }

@@ -18,21 +18,16 @@ variable "master-private-ip" {
   description = "Ip of provision master machine"
 }
 
-module "security-group-etl" {
-  source = "../security-groups/etl"
+resource "scaleway_ip" "etl" {
+  count = "${var.count}"
+  server = "${element(scaleway_server.etl.*.id, count.index)}"
 }
 
-resource "scaleway_ip" "ip-etl" {
+resource "scaleway_server" etl {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-etl.*.id, count.index)}"
-}
-
-resource "scaleway_server" server-etl {
-  count = "${var.count}"
-  name = "server-etl_${var.count}"
+  name = "etl_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
-  security_group = "${module.security-group-etl.id}"
   dynamic_ip_required = true
 
   provisioner "remote-exec" {
@@ -50,5 +45,5 @@ resource "scaleway_server" server-etl {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-etl.*.ip}"
+  value = "${scaleway_ip.etl.*.ip}"
 }

@@ -22,14 +22,14 @@ module "security-group-kibana" {
   source = "../security-groups/kibana"
 }
 
-resource "scaleway_ip" "ip-kibana" {
+resource "scaleway_ip" "kibana" {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-kibana.*.id, count.index)}"
+  server = "${element(scaleway_server.kibana.*.id, count.index)}"
 }
 
-resource "scaleway_server" server-kibana {
+resource "scaleway_server" kibana {
   count = "${var.count}"
-  name = "server-kibana_${var.count}"
+  name = "kibana_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   security_group = "${module.security-group-kibana.id}"
@@ -50,5 +50,5 @@ resource "scaleway_server" server-kibana {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-kibana.*.ip}"
+  value = "${scaleway_ip.kibana.*.ip}"
 }

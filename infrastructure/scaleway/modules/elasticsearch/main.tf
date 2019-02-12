@@ -22,14 +22,14 @@ module "security-group-elasticsearch" {
   source = "../security-groups/elasticsearch"
 }
 
-resource "scaleway_ip" "ip-elasticsearch" {
+resource "scaleway_ip" "elasticsearch" {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-elasticsearch.*.id, count.index)}"
+  server = "${element(scaleway_server.elasticsearch.*.id, count.index)}"
 }
 
-resource "scaleway_server" server-elasticsearch {
+resource "scaleway_server" elasticsearch {
   count = "${var.count}"
-  name = "server-elasticsearch_${var.count}"
+  name = "elasticsearch_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   security_group = "${module.security-group-elasticsearch.id}"
@@ -50,5 +50,5 @@ resource "scaleway_server" server-elasticsearch {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-elasticsearch.*.ip}"
+  value = "${scaleway_ip.elasticsearch.*.ip}"
 }

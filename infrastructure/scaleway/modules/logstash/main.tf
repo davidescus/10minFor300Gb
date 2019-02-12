@@ -22,14 +22,14 @@ module "security-group-logstash" {
   source = "../security-groups/logstash"
 }
 
-resource "scaleway_ip" "ip-logstash" {
+resource "scaleway_ip" "logstash" {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-logstash.*.id, count.index)}"
+  server = "${element(scaleway_server.logstash.*.id, count.index)}"
 }
 
-resource "scaleway_server" server-logstash {
+resource "scaleway_server" logstash {
   count = "${var.count}"
-  name = "server-logstash_${var.count}"
+  name = "logstash_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   security_group = "${module.security-group-logstash.id}"
@@ -50,5 +50,5 @@ resource "scaleway_server" server-logstash {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-logstash.*.ip}"
+  value = "${scaleway_ip.logstash.*.ip}"
 }

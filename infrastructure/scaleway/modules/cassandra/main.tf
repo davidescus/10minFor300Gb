@@ -23,21 +23,16 @@ variable "node-type" {
   description = "Node type seed/normal-node"
 }
 
-module "security-group-cassandra" {
-  source = "../security-groups/cassandra"
+resource "scaleway_ip" "cassandra" {
+  count = "${var.count}"
+  server = "${element(scaleway_server.cassandra.*.id, count.index)}"
 }
 
-resource "scaleway_ip" "ip-cassandra" {
+resource "scaleway_server" cassandra {
   count = "${var.count}"
-  server = "${element(scaleway_server.server-cassandra.*.id, count.index)}"
-}
-
-resource "scaleway_server" server-cassandra {
-  count = "${var.count}"
-  name = "server-cassandra-${var.node-type}_${var.count}"
+  name = "cassandra-${var.node-type}_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
-  security_group = "${module.security-group-cassandra.id}"
   dynamic_ip_required = true
 
   provisioner "remote-exec" {
@@ -55,5 +50,5 @@ resource "scaleway_server" server-cassandra {
 }
 
 output "ips" {
-  value = "${scaleway_ip.ip-cassandra.*.ip}"
+  value = "${scaleway_ip.cassandra.*.ip}"
 }
