@@ -16,6 +16,7 @@ module "provision" {
   count = 1
   os-image = "${var.os-image}"
   instance-type = "${var.instance-type}"
+  private-key = "${file(var.private-key)}"
 }
 output "Provision Machine(s) Ip: " {
   value = "${module.provision.ips}"
@@ -30,107 +31,80 @@ module "monitoring" {
   os-image = "${var.os-image}"
   instance-type = "${var.instance-type}"
   master-private-ip = "${module.provision.master-private-ip}"
+  private-key = "${file(var.private-key)}"
 }
 output "Monitoring Machine(s) Ip: " {
   value = "${module.monitoring.ips}"
 }
 
-//# ----------------------------------------------------------
-//# Elasticsearch machine(s)
-//# ----------------------------------------------------------
-//module "elasticsearch" {
-//  source = "./modules/elasticsearch"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//}
-//output "Elasticsearch Node Machine(s) Ip: " {
-//  value = "${module.elasticsearch.ips}"
-//}
-//
-//# ----------------------------------------------------------
-//# Kibana machine(s)
-//# ----------------------------------------------------------
-//module "kibana" {
-//  source = "./modules/kibana"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//}
-//output "Kibana Machine(s) Ip: " {
-//  value = "${module.kibana.ips}"
-//}
-//
-//# ----------------------------------------------------------
-//# Logstash machine(s)
-//# ----------------------------------------------------------
-//module "logstash" {
-//  source = "./modules/logstash"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//}
-//output "Logstash Machine(s) Ip: " {
-//  value = "${module.logstash.ips}"
-//}
-//
-//# ----------------------------------------------------------
-//# Etl machine(s)
-//# ----------------------------------------------------------
-//module "etl" {
-//  source = "./modules/etl"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//}
-//output "Etl Machine(s) Ip: " {
-//  value = "${module.etl.ips}"
-//}
-//
-//# ----------------------------------------------------------
-//# Geneator machine(s)
-//# ----------------------------------------------------------
-//module "generator" {
-//  source = "./modules/generator"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//}
-//output "Geneator Machine(s) Ip: " {
-//  value = "${module.etl.ips}"
-//}
-//
-//# ----------------------------------------------------------
-//# Cassandra seed machine(s)
-//# ----------------------------------------------------------
-//module "cassandra-seed" {
-//  source = "./modules/cassandra"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//  node-type = "seed"
-//}
-//output "Cassandra Seed Machine(s) Ip: " {
-//  value = "${module.cassandra-seed.ips}"
-//}
-//
-//# ----------------------------------------------------------
-//# Cassandra node machine(s)
-//# ----------------------------------------------------------
-//module "cassandra-node" {
-//  source = "./modules/cassandra"
-//  count = 1
-//  os-image = "${var.os-image}"
-//  instance-type = "${var.instance-type}"
-//  master-private-ip = "${module.provision.master-private-ip}"
-//  node-type = "node"
-//}
-//output "Cassandra Node Machine(s) Ip: " {
-//  value = "${module.cassandra-node.ips}"
-//}
+# ----------------------------------------------------------
+# Logging machine(s)
+# ----------------------------------------------------------
+module "logging" {
+  source = "./modules/logging"
+  count-elasticsearch = 1
+  count-kibana = 1
+  count-logstash = 1
+  os-image = "${var.os-image}"
+  instance-type = "${var.instance-type}"
+  master-private-ip = "${module.provision.master-private-ip}"
+  private-key = "${file(var.private-key)}"
+}
+output "Elasticsearch Machine(s) Ip: " {
+  value = "${module.logging.ips-elasticsearch}"
+}
+output "Kibana Machine(s) Ip: " {
+  value = "${module.logging.ips-kibana}"
+}
+output "Logstash Machine(s) Ip: " {
+  value = "${module.logging.ips-logstash}"
+}
+
+# ----------------------------------------------------------
+# Cassandra seed machine(s)
+# ----------------------------------------------------------
+module "storage" {
+  source = "./modules/storage"
+  count-seed = 1
+  count-node = 1
+  os-image = "${var.os-image}"
+  instance-type = "${var.instance-type}"
+  master-private-ip = "${module.provision.master-private-ip}"
+  private-key = "${file(var.private-key)}"
+}
+output "Cassandra Seed Machine(s) Ip: " {
+  value = "${module.storage.ips-cassandra-seed}"
+}
+output "Cassandra Node Machine(s) Ip: " {
+  value = "${module.storage.ips-cassandra-node}"
+}
+
+# ----------------------------------------------------------
+# Etl machine(s)
+# ----------------------------------------------------------
+module "etl" {
+  source = "./modules/etl"
+  count = 1
+  os-image = "${var.os-image}"
+  instance-type = "${var.instance-type}"
+  master-private-ip = "${module.provision.master-private-ip}"
+  private-key = "${file(var.private-key)}"
+}
+output "Etl Machine(s) Ip: " {
+  value = "${module.etl.ips}"
+}
+
+# ----------------------------------------------------------
+# Geneator machine(s)
+# ----------------------------------------------------------
+module "generator" {
+  source = "./modules/generator"
+  count = 1
+  os-image = "${var.os-image}"
+  instance-type = "${var.instance-type}"
+  master-private-ip = "${module.provision.master-private-ip}"
+  private-key = "${file(var.private-key)}"
+}
+output "Geneator Machine(s) Ip: " {
+  value = "${module.etl.ips}"
+}

@@ -18,6 +18,11 @@ variable "master-private-ip" {
   description = "Ip of provision master machine"
 }
 
+variable "private-key" {
+  type = "string"
+  description = "Private key for ssh connection"
+}
+
 resource "scaleway_ip" "etl" {
   count = "${var.count}"
   server = "${element(scaleway_server.etl.*.id, count.index)}"
@@ -39,7 +44,7 @@ resource "scaleway_server" etl {
     ]
 
     connection {
-      private_key = "${file("./without-passphrase-private-key")}"
+      private_key = "${var.private-key}"
     }
   }
 }

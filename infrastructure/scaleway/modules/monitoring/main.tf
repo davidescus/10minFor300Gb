@@ -18,8 +18,9 @@ variable "master-private-ip" {
   description = "Ip of provision master machine"
 }
 
-module "security-group-monitoring" {
-  source = "../security-groups/monitoring"
+variable "private-key" {
+  type = "string"
+  description = "Private key for ssh connection"
 }
 
 resource "scaleway_ip" "monitoring" {
@@ -32,7 +33,7 @@ resource "scaleway_server" monitoring {
   name = "monitoring_${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
-  security_group = "${module.security-group-monitoring.id}"
+  security_group = "${scaleway_security_group.monitoring.id}"
   dynamic_ip_required = true
 
   provisioner "remote-exec" {
@@ -44,9 +45,22 @@ resource "scaleway_server" monitoring {
     ]
 
     connection {
-      private_key = "${file("./without-passphrase-private-key")}"
+      private_key = "${var.private-key}"
     }
   }
+}
+
+resource "scaleway_security_group" "monitoring" {
+  name = "provision"
+  description = "Security group used for: monitoring machine(s)"
+}
+resource "scaleway_security_group_rule" "monitoring-accept-prometheus-web" {
+  security_group = "${scaleway_security_group.monitoring.id}"
+  action    = "accept"
+  direction = "inbound"
+  ip_range  = "0.0.0.0/0"
+  protocol  = "TCP"
+  port      = 9090
 }
 
 output "ips" {

@@ -13,6 +13,11 @@ variable "instance-type" {
   description = "Server Type"
 }
 
+variable "private-key" {
+  type = "string"
+  description = "Private key for ssh connection"
+}
+
 resource "scaleway_ip" "provision" {
   count = "${var.count}"
   server = "${element(scaleway_server.provision.*.id, count.index)}"
@@ -40,7 +45,7 @@ resource "scaleway_server" provision {
     ]
 
     connection {
-      private_key = "${file("./without-passphrase-private-key")}"
+      private_key = "${var.private-key}"
     }
   }
 
@@ -83,7 +88,7 @@ resource "scaleway_server" provision {
     ]
 
     connection {
-      private_key = "${file("./without-passphrase-private-key")}"
+      private_key = "${var.private-key}"
     }
   }
 }
