@@ -37,7 +37,7 @@ resource "scaleway_ip" "cassandra-seed" {
 }
 resource "scaleway_server" cassandra-seed {
   count = "${var.count-seed}"
-  name = "cassandra-seed_${var.count-seed}"
+  name = "cassandra-seed-${var.count-seed}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   dynamic_ip_required = true

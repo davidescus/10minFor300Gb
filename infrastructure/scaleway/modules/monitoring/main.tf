@@ -30,7 +30,7 @@ resource "scaleway_ip" "monitoring" {
 
 resource "scaleway_server" monitoring {
   count = "${var.count}"
-  name = "monitoring_${var.count}"
+  name = "monitoring-${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   security_group = "${scaleway_security_group.monitoring.id}"

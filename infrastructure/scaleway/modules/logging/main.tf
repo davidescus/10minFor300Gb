@@ -144,7 +144,7 @@ resource "scaleway_ip" "logstash" {
 }
 resource "scaleway_server" logstash {
   count = "${var.count-logstash}"
-  name = "logstash_${var.count-logstash}"
+  name = "logstash-${var.count-logstash}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   security_group = "${scaleway_security_group.logstash.id}"

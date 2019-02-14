@@ -30,7 +30,7 @@ resource "scaleway_ip" "generator" {
 
 resource "scaleway_server" generator {
   count = "${var.count}"
-  name = "generator_${var.count}"
+  name = "generator-${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   dynamic_ip_required = true

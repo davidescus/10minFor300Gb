@@ -25,7 +25,7 @@ resource "scaleway_ip" "provision" {
 
 resource "scaleway_server" provision {
   count = "${var.count}"
-  name = "provision_${var.count}"
+  name = "provision-${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   dynamic_ip_required = true

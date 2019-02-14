@@ -30,7 +30,7 @@ resource "scaleway_ip" "etl" {
 
 resource "scaleway_server" etl {
   count = "${var.count}"
-  name = "etl_${var.count}"
+  name = "etl-${var.count}"
   image = "${var.os-image}"
   type = "${var.instance-type}"
   dynamic_ip_required = true
