@@ -3,31 +3,31 @@ base:
     - prometheus-node-exporter
     - filebeat
 
-  '*-generator':
-    - app-generator
-
-  '*-monitoring':
+  'monitoring-*':
     - prometheus
 
-  '*-elasticsearch':
+  'elasticsearch-*':
     - common.ubuntu-swap
     - java8
     - elasticsearch
 
-  '*-kibana':
+  'kibana-*':
     - common.ubuntu-swap
     - java8
     - kibana
 
-  '*-logstash':
+  'logstash-*':
     - common.ubuntu-swap
     - java8
     - logstash
 
-  '*-cassandra-*':
+  'cassandra-*':
     - common.ubuntu-swap
     - java8
     - cassandra
 
-  '*-etl':
+  'etl-*':
     - etl
+
+'generator-*':
+    - app-generator
