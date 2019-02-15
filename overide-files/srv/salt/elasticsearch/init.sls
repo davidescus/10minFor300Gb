@@ -18,5 +18,4 @@ elasticsearch|service:
 elasticsearch|config:
   file.managed:
     - name: /etc/elasticsearch/elasticsearch.yml
-    - template: jinja
     - source: salt://elasticsearch/files/elasticsearch.yml
