@@ -29,5 +29,5 @@ base:
   'etl-*':
     - etl
 
-'generator-*':
+  'generator-*':
     - app-generator
