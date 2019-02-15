@@ -1,9 +1,13 @@
 {% import_yaml 'config.yaml' as config %}
 
+prometheus|remove-targets:
+  file.absent:
+    - name: /root/prometheus-targets
+
 # grab all network interfaces and create config files for each machine
-{%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
-{%- if interfaces is defined %}
-{%- for name, ifaces in interfaces.items() %}
+{%- set ips= salt['mine.get']('*', 'network.ipaddrs').items() %}
+{% if ips|length %}
+{%- for name, ip in ips %}
 prometheus|deploy-target-{{ name }}:
   file.managed:
     - name: /root/prometheus-targets/{{ name }}.json
@@ -11,7 +15,7 @@ prometheus|deploy-target-{{ name }}:
     - makedirs: True
     - template: jinja
     - context:
-      ipAddress: {{ ifaces['enp0s2']['inet'][0]['address'] }}
+      ipAddress: {{ ip[0] }}
 {% endfor %}
 {% endif %}
 
