@@ -18,8 +18,9 @@ kibana|log-file:
     - require:
       - pkg: kibana|package
 
-{%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
-{%- set  elasticSearchIp =  interfaces['server-elasticsearch']['enp0s2']['inet'][0]['address'] %}
+# TODO deal with multiple elasticsearch machines
+{%- set ips = salt['mine.get']('elasticsearch-*', 'network.ipaddrs') %}
+{%- set  elasticSearchIp =  ips['elasticsearch-1'][0] %}
 
 kibana|config:
   file.managed:

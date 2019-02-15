@@ -12,8 +12,9 @@ logstash|config:
     - name: /etc/logstash/logstash.yml
     - source: salt://logstash/files/logstash.yml
 
-{%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
-{%- set  elasticSearchIp =  interfaces['server-elasticsearch']['enp0s2']['inet'][0]['address'] %}
+# TODO deal with many machines
+{%- set ips = salt['mine.get']('elasticsearch-*', 'network.ipaddrs') %}
+{%- set  elasticSearchIp =  ips['elasticsearch-1'][0] %}
 
 logstash|pipeline-config:
   file.managed:
