@@ -1,10 +1,13 @@
 # it will worls only on debina family
 # https://github.com/bougie/salt-filebeat-formula/
 
-{%- set ips= salt['mine.get']('logstash-*', 'network.ipaddrs') %}
+{%- set ips = salt['mine.get']('logstash-*', 'network.ipaddrs').items() %}
 {% if ips|length %}
+{% for hostname, ip in ips %}
 # TODO deal with multiple logstash machines
-{%- set logstashIp =  ips['logstash-1'][0] %}
+{% if loop.first %}
+
+{%- set logstashIp =  ip[0] %}
 pkg|apt-transport-https:
   pkg.latest:
     - name: apt-transport-https
@@ -39,4 +42,6 @@ filebeat|service:
   service.running:
     - name: filebeat
     - enable: True
+{% endif %}
+{% endfor %}
 {% endif %}

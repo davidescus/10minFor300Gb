@@ -60,51 +60,51 @@ output "Logstash Machine(s) Ip: " {
   value = "${module.logging.ips-logstash}"
 }
 
-# ----------------------------------------------------------
-# Cassandra seed machine(s)
-# ----------------------------------------------------------
-module "storage" {
-  source = "./modules/storage"
-  count-seed = 1
-  count-node = 1
-  os-image = "${var.os-image}"
-  instance-type = "${var.instance-type}"
-  master-private-ip = "${module.provision.master-private-ip}"
-  private-key = "${file(var.private-key)}"
-}
-output "Cassandra Seed Machine(s) Ip: " {
-  value = "${module.storage.ips-cassandra-seed}"
-}
-output "Cassandra Node Machine(s) Ip: " {
-  value = "${module.storage.ips-cassandra-node}"
-}
-
-# ----------------------------------------------------------
-# Etl machine(s)
-# ----------------------------------------------------------
-module "etl" {
-  source = "./modules/etl"
-  count = 1
-  os-image = "${var.os-image}"
-  instance-type = "${var.instance-type}"
-  master-private-ip = "${module.provision.master-private-ip}"
-  private-key = "${file(var.private-key)}"
-}
-output "Etl Machine(s) Ip: " {
-  value = "${module.etl.ips}"
-}
-
-# ----------------------------------------------------------
-# Geneator machine(s)
-# ----------------------------------------------------------
-module "generator" {
-  source = "./modules/generator"
-  count = 1
-  os-image = "${var.os-image}"
-  instance-type = "${var.instance-type}"
-  master-private-ip = "${module.provision.master-private-ip}"
-  private-key = "${file(var.private-key)}"
-}
-output "Geneator Machine(s) Ip: " {
-  value = "${module.etl.ips}"
-}
+//# ----------------------------------------------------------
+//# Cassandra seed machine(s)
+//# ----------------------------------------------------------
+//module "storage" {
+//  source = "./modules/storage"
+//  count-seed = 1
+//  count-node = 1
+//  os-image = "${var.os-image}"
+//  instance-type = "${var.instance-type}"
+//  master-private-ip = "${module.provision.master-private-ip}"
+//  private-key = "${file(var.private-key)}"
+//}
+//output "Cassandra Seed Machine(s) Ip: " {
+//  value = "${module.storage.ips-cassandra-seed}"
+//}
+//output "Cassandra Node Machine(s) Ip: " {
+//  value = "${module.storage.ips-cassandra-node}"
+//}
+//
+//# ----------------------------------------------------------
+//# Etl machine(s)
+//# ----------------------------------------------------------
+//module "etl" {
+//  source = "./modules/etl"
+//  count = 1
+//  os-image = "${var.os-image}"
+//  instance-type = "${var.instance-type}"
+//  master-private-ip = "${module.provision.master-private-ip}"
+//  private-key = "${file(var.private-key)}"
+//}
+//output "Etl Machine(s) Ip: " {
+//  value = "${module.etl.ips}"
+//}
+//
+//# ----------------------------------------------------------
+//# Geneator machine(s)
+//# ----------------------------------------------------------
+//module "generator" {
+//  source = "./modules/generator"
+//  count = 1
+//  os-image = "${var.os-image}"
+//  instance-type = "${var.instance-type}"
+//  master-private-ip = "${module.provision.master-private-ip}"
+//  private-key = "${file(var.private-key)}"
+//}
+//output "Geneator Machine(s) Ip: " {
+//  value = "${module.etl.ips}"
+//}
