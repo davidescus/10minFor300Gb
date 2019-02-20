@@ -1,25 +1,22 @@
 include:
   - common.cassandra-package
 
-# TODO find solution to scale on many machines
-# TODO get network interfaces only for cassandra machines
-{%- set interfaces = salt['mine.get']('*', 'network.interfaces') %}
-{%- set  seedIp =  interfaces['server-cassandra-seed']['enp0s2']['inet'][0]['address'] %}
-{%- set  nodeIp =  interfaces['server-cassandra-node']['enp0s2']['inet'][0]['address'] %}
-{%- set serverName = grains['id'] %}
+# create list with all seeds ips
+{% set seedIps = [] -%}
+{%- set seedIpAddresses = salt['mine.get']('cassandra-seed-*', 'network.ipaddrs').items() %}
+{% if seedIpAddresses|length %}
+{% for hostname, ip in seedIpAddresses %}
+{% do seedIps.append(ip[0]) -%}
+{% endfor %}
+{% endif %}
 
-cassandra|config:
-  file.managed:
+# TODO check when add new server is it added into conf???
     - name: /etc/cassandra/cassandra.yaml
     - source: salt://cassandra/files/cassandra.yaml
     - template: jinja
     - context:
-      {% if serverName == "server-cassandra-node" %}
-      nodeIp: {{ nodeIp }}
-      {% else %}
-      nodeIp: {{ seedIp }}
-      {% endif %}
-      seedIp: {{ seedIp }}
+      nodeIp: {{ salt['network.ipaddrs']()[0] }}
+      seedIp: {{ seedIps | join(", ") }}
 
 # TODO do not restart cassandra if already running
 cassandra|service-stop:
@@ -36,9 +33,9 @@ cassandra|service:
   service.running:
     - name: cassandra
     - enable: True
-    {% if serverName == "server-cassandra-node" %}
+    {% if grains['id'].startswith('cassandra-node') %}
     - check_cmd:
-      - "nc -z {{ seedIp }} 9042; do sleep 1; done"
+      - "nc -z {{ seedIps[0] }} 9042; do sleep 1; done"
     {% endif %}
     - require:
       - service: cassandra|service-stop
