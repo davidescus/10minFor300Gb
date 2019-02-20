@@ -13,8 +13,7 @@ kibana|log-file:
   file.managed:
     - name: {{ config.kibana.log_file }}
     - makedirs: True
-    - user: kibana
-    - group: kibana
+    - runas: kibana
     - require:
       - pkg: kibana|package
 

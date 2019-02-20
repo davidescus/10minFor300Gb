@@ -10,7 +10,9 @@ include:
 {% endfor %}
 {% endif %}
 
-# TODO check when add new server is it added into conf???
+# TODO check when add new server is it added into conf??
+cassandra|config:
+  file.managed:
     - name: /etc/cassandra/cassandra.yaml
     - source: salt://cassandra/files/cassandra.yaml
     - template: jinja
